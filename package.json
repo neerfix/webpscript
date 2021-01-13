@@ -1,0 +1,16 @@
+{
+  "name": "webpscript",
+  "version": "0.0.1",
+  "description": "script to generate webp by folder",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "webp",
+    "script",
+    "generate"
+  ],
+  "author": "neerfix",
+  "license": "ISC"
+}
