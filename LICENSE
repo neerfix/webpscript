@@ -1,0 +1,10 @@
+### Key Sections:
+
+- **Features:** Describes what the script does.
+- **Installation:** Provides steps for cloning the repository, running the installation script, and setting up the alias.
+- **Usage:** Instructions for using the script, including options for converting images and deleting original files.
+- **Automatic Updates:** Explains the update feature.
+- **Contributing:** Guidelines for contributing to the project.
+- **License:** Information about the project's license.
+
+This `README.md` provides comprehensive instructions and details for users to install, use, and contribute to the `webpg.sh` script.
