@@ -24,7 +24,7 @@ cd webpscript
 Run the install.sh script to set up the webpg command as an alias:
 
 ```bash
-sudo ./install.sh
+sudo ./scripts/install.sh
 ```
 
 This will copy the webpg.sh script to /usr/local/bin and add an alias webpg to your shell configuration (e.g., .bashrc or .zshrc).

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Name of the main script
-SCRIPT_NAME="webpg.sh"
+SCRIPT_NAME="./scripts/webpg.sh"
 
 # Path where the script will be installed
 INSTALL_DIR="/usr/local/bin"
