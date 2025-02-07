@@ -6,6 +6,16 @@ YELLOW='\033[1;33m'
 GREEN='\033[0;32m'
 NO_COLOR='\033[0m'
 
+# Detect the shell being used (bash or zsh)
+if [ "$SHELL" = "/usr/bin/zsh" ]; then
+  SHELL_CONFIG="$HOME/.zshrc"
+elif [ "$SHELL" = "/usr/bin/bash" ]; then
+  SHELL_CONFIG="$HOME/.bashrc"
+else
+  echo "Unsupported shell. Please manually add the alias to your shell configuration file."
+  exit 1
+fi
+
 # Function to display help information
 show_help() {
     echo "Usage: webpg [options]"
@@ -36,6 +46,10 @@ update_script() {
     # Make sure the script is executable
     sudo chmod +x /usr/local/bin/webpg
 
+    # Update the version in the script
+    sudo sed -i "s/^CURRENT_VERSION=.*/CURRENT_VERSION=\"$latest_release\"/" /usr/local/bin/webpg
+
+    # Clean up
     printf "\n"
     printf "${GREEN}Update complete!${NO_COLOR} Please restart the script.\n"
     exit 0
@@ -54,8 +68,20 @@ check_for_update() {
         echo "You are using the latest version: $CURRENT_VERSION."
     fi
 }
-# Check for script updates before running the main function
+
+# Parse arguments
+deleteOriginal=false
 check_for_update
+while [[ "$#" -gt 0 ]]; do
+    case $1 in
+        --deleteOriginalFile|-dof) deleteOriginal=true ;;
+        --help|-h) show_help; exit 0 ;;
+        --version|-v) printf "WebP script version: ${YELLOW}${CURRENT_VERSION} \n"; exit 0 ;;
+        --check-version|-cv) check_for_update; exit 0 ;;
+        *) echo "Unknown parameter passed: $1"; show_help; exit 1 ;;
+    esac
+    shift
+done
 
 # Function to generate WebP images
 webpGenerate() {
@@ -76,19 +102,6 @@ webpGenerate() {
         exit 1
     fi
 }
-
-# Parse arguments
-deleteOriginal=false
-while [[ "$#" -gt 0 ]]; do
-    case $1 in
-        --deleteOriginalFile|-dof) deleteOriginal=true ;;
-        --help|-h) show_help; exit 0 ;;
-        --version|-v) printf "WebP script version: ${YELLOW}${CURRENT_VERSION} \n"; exit 0 ;;
-        --check-version|-cv) check_for_update; exit 0 ;;
-        *) echo "Unknown parameter passed: $1"; show_help; exit 1 ;;
-    esac
-    shift
-done
 
 # Main loop
 while true; do
