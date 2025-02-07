@@ -2,29 +2,21 @@
 
 REPO_URL="https://github.com/neerfix/webpscript"
 CURRENT_VERSION="0.2.0"  # Update this with the current script version
+YELLOW='\033[1;33m'
+GREEN='\033[0;32m'
+NO_COLOR='\033[0m'
 
 # Function to display help information
 show_help() {
     echo "Usage: webpg [options]"
     echo ""
     echo "Options:"
+    echo "  -v, --version               Show the script version."
+    echo "  -cv, --check-version        Check for the latest version on GitHub."
     echo "  -h, --help                  Show this help message and exit."
     echo "  -dof, --deleteOriginalFile  Delete the original file after converting to WebP."
     echo ""
     echo "This script converts images in the current directory to WebP format."
-}
-
-# Function to check for the latest version on GitHub
-check_for_update() {
-    echo "Checking for updates..."
-    latest_release=$(curl -s "https://api.github.com/repos/neerfix/webpscript/releases/latest" | grep -Po '"tag_name": "\K.*?(?=")')
-
-    if [ "$latest_release" != "$CURRENT_VERSION" ]; then
-        echo "New version available: $latest_release. Updating the script..."
-        update_script "$latest_release"
-    else
-        echo "You are using the latest version: $CURRENT_VERSION."
-    fi
 }
 
 # Function to update the script
@@ -44,9 +36,26 @@ update_script() {
     # Make sure the script is executable
     sudo chmod +x /usr/local/bin/webpg
 
-    echo "Update complete! Please restart the script."
+    printf "\n"
+    printf "${GREEN}Update complete!${NO_COLOR} Please restart the script.\n"
     exit 0
 }
+
+# Function to check for the latest version on GitHub
+check_for_update() {
+    echo "Checking for updates..."
+    latest_release=$(curl -s "https://api.github.com/repos/neerfix/webpscript/releases/latest" | grep -Po '"tag_name": "\K.*?(?=")')
+
+    if [ "$latest_release" != "$CURRENT_VERSION" ]; then
+        printf "${YELLOW}New version available: $latest_release. Updating the script...${NO_COLOR}\n"
+        printf "\n"
+        update_script "$latest_release"
+    else
+        echo "You are using the latest version: $CURRENT_VERSION."
+    fi
+}
+# Check for script updates before running the main function
+check_for_update
 
 # Function to generate WebP images
 webpGenerate() {
@@ -74,13 +83,12 @@ while [[ "$#" -gt 0 ]]; do
     case $1 in
         --deleteOriginalFile|-dof) deleteOriginal=true ;;
         --help|-h) show_help; exit 0 ;;
+        --version|-v) printf "WebP script version: ${YELLOW}${CURRENT_VERSION} \n"; exit 0 ;;
+        --check-version|-cv) check_for_update; exit 0 ;;
         *) echo "Unknown parameter passed: $1"; show_help; exit 1 ;;
     esac
     shift
 done
-
-# Check for script updates before running the main function
-check_for_update
 
 # Main loop
 while true; do
