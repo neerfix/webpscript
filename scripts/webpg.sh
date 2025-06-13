@@ -1,7 +1,7 @@
 #!/bin/bash
 
 REPO_URL="https://github.com/neerfix/webpscript"
-CURRENT_VERSION="0.2.3"  # Update this with the current script version
+CURRENT_VERSION="0.2.5"  # Update this with the current script version
 YELLOW='\033[1;33m'
 GREEN='\033[0;32m'
 NO_COLOR='\033[0m'
