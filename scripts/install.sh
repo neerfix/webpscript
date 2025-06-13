@@ -1,42 +1,50 @@
 #!/bin/bash
 
-# Name of the main script
-SCRIPT_NAME="./scripts/webpg.sh"
+set -e
 
-# Path where the script will be installed
+SCRIPT_SOURCE="./scripts/webpg.sh"
 INSTALL_DIR="/usr/local/bin"
 INSTALL_PATH="$INSTALL_DIR/webpg"
+ALIAS_LINE="alias webpg='$INSTALL_PATH'"
 
-# Copy the script to the installation directory
-if sudo cp "$SCRIPT_NAME" "$INSTALL_PATH"; then
-  echo "Script copied to $INSTALL_PATH"
-else
-  echo "Error copying the script."
+# Check if source script exists
+if [ ! -f "$SCRIPT_SOURCE" ]; then
+  echo "❌ Source script not found at $SCRIPT_SOURCE"
   exit 1
 fi
 
-# Make the script executable
+# Copy the script to /usr/local/bin
+echo "📦 Installing webpg script..."
+sudo cp "$SCRIPT_SOURCE" "$INSTALL_PATH"
 sudo chmod +x "$INSTALL_PATH"
+echo "✅ Script installed to $INSTALL_PATH"
 
-# Detect the shell being used (bash or zsh)
-if [ "$SHELL" = "/usr/bin/zsh" ]; then
-  SHELL_CONFIG="$HOME/.zshrc"
-elif [ "$SHELL" = "/usr/bin/bash" ]; then
-  SHELL_CONFIG="$HOME/.bashrc"
+# Detect shell config file
+SHELL_NAME=$(basename "$SHELL")
+case "$SHELL_NAME" in
+  zsh) SHELL_CONFIG="$HOME/.zshrc" ;;
+  bash) SHELL_CONFIG="$HOME/.bashrc" ;;
+  fish)
+    echo "🐟 Fish shell detected. Please add this manually to your config.fish:"
+    echo "$ALIAS_LINE"
+    exit 0
+    ;;
+  *)
+    echo "⚠️ Unsupported shell ($SHELL_NAME). Please add the alias manually:"
+    echo "$ALIAS_LINE"
+    exit 0
+    ;;
+esac
+
+# Add alias if not already present
+if grep -q "$ALIAS_LINE" "$SHELL_CONFIG"; then
+  echo "✅ Alias already exists in $SHELL_CONFIG"
 else
-  echo "Unsupported shell. Please manually add the alias to your shell configuration file."
-  exit 1
+  echo "$ALIAS_LINE" >> "$SHELL_CONFIG"
+  echo "🔗 Alias added to $SHELL_CONFIG"
 fi
 
-# Add the alias to the shell configuration file
-if ! grep -q "alias webpg=" "$SHELL_CONFIG"; then
-  echo "alias webpg='$INSTALL_PATH'" >> "$SHELL_CONFIG"
-  echo "Alias 'webpg' added to $SHELL_CONFIG"
-else
-  echo "Alias 'webpg' already exists in $SHELL_CONFIG"
-fi
-
-# Inform the user to reload the shell configuration file
-echo "Please reload your shell configuration file by running 'source $SHELL_CONFIG' or restart your terminal."
-
-echo "Installation complete. You can now use 'webpg' to run your script."
+echo ""
+echo "🎉 Installation complete!"
+echo "➡️ Please reload your shell config with: source $SHELL_CONFIG"
+echo "✅ You can now run the script with: webpg"
